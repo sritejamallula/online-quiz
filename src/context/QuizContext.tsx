@@ -83,23 +83,50 @@ const DEFAULT_FACULTY_CONFIG: FacultyConfig = {
 export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // 1. Initial State Loaders
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.USER);
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.USER);
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (parsed && typeof parsed === 'object') {
+        // Sanitize invalid semesterCode if corrupted in previous runs
+        if (parsed.semesterCode === 'NaN-NaN' || !parsed.semesterCode) {
+          parsed.semesterCode = '1-1';
+        }
+        return parsed;
+      }
+      return null;
+    } catch {
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      return null;
+    }
   });
 
   const [quizAttempts, setQuizAttempts] = useState<QuizAttempt[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.ATTEMPTS);
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.ATTEMPTS);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      localStorage.removeItem(STORAGE_KEYS.ATTEMPTS);
+      return [];
+    }
   });
 
   const [facultyConfig, setFacultyConfig] = useState<FacultyConfig>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.CONFIG);
-    return saved ? JSON.parse(saved) : DEFAULT_FACULTY_CONFIG;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.CONFIG);
+      return saved ? JSON.parse(saved) : DEFAULT_FACULTY_CONFIG;
+    } catch {
+      return DEFAULT_FACULTY_CONFIG;
+    }
   });
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.THEME);
-    return (saved as 'dark' | 'light') || 'dark';
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.THEME);
+      return (saved as 'dark' | 'light') || 'dark';
+    } catch {
+      return 'dark';
+    }
   });
 
   // Filters State
