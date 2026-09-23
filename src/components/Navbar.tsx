@@ -22,7 +22,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 w-full glass-panel border-b border-slate-800/80 transition-colors">
+      <nav className="sticky top-0 z-40 w-full bg-white/85 backdrop-blur-xl border-b border-slate-200/80 shadow-sm shadow-slate-200/50 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             
@@ -31,26 +31,26 @@ export const Navbar: React.FC = () => {
               onClick={() => navigateTo('SUBJECTS')}
               className="flex items-center gap-3 cursor-pointer group"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-500 p-0.5 shadow-lg shadow-indigo-600/20 group-hover:scale-105 transition-transform">
-                <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-indigo-400 group-hover:rotate-12 transition-transform" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-500 p-0.5 shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                <div className="w-full h-full bg-white rounded-[10px] flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-indigo-600 group-hover:rotate-12 transition-transform" />
                 </div>
               </div>
               <div>
-                <span className="text-lg font-extrabold text-white tracking-tight flex items-center gap-1.5">
-                  AcademiaQuiz <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">B.Tech</span>
+                <span className="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5">
+                  AcademiaQuiz <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80">B.Tech</span>
                 </span>
               </div>
             </div>
 
             {/* Navigation Links */}
-            <div className="hidden md:flex items-center space-x-1 bg-slate-900/60 p-1 rounded-xl border border-slate-800">
+            <div className="hidden md:flex items-center space-x-1 bg-slate-100/80 p-1 rounded-2xl border border-slate-200/80">
               <button
                 onClick={() => navigateTo('SUBJECTS')}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
                   activeView === 'SUBJECTS' || activeView === 'LESSONS' || activeView === 'QUIZ_LIST'
-                    ? 'bg-indigo-600 text-white shadow'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white'
                 }`}
               >
                 <BookOpen className="w-4 h-4" /> 8-Sem Subjects
@@ -58,10 +58,10 @@ export const Navbar: React.FC = () => {
 
               <button
                 onClick={() => navigateTo('LEADERBOARD')}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
                   activeView === 'LEADERBOARD'
-                    ? 'bg-emerald-600 text-white shadow'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white'
                 }`}
               >
                 <Trophy className="w-4 h-4" /> Class Leaderboard
@@ -69,10 +69,10 @@ export const Navbar: React.FC = () => {
 
               <button
                 onClick={() => navigateTo('FACULTY_DASHBOARD')}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
                   activeView === 'FACULTY_DASHBOARD'
-                    ? 'bg-amber-600 text-white shadow'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white'
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4" /> Faculty Analytics
@@ -85,23 +85,23 @@ export const Navbar: React.FC = () => {
               <button
                 onClick={toggleTheme}
                 title="Toggle Theme"
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition border border-transparent hover:border-slate-700"
+                className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition border border-transparent hover:border-slate-200"
               >
-                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-indigo-600" />}
               </button>
 
               {/* User Profile Pill / Auth button */}
               {currentUser ? (
-                <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 p-1.5 pl-3 rounded-xl">
+                <div className="flex items-center gap-2 bg-slate-100/90 border border-slate-200 p-1.5 pl-3 rounded-2xl">
                   <div className="flex items-center gap-2 text-xs">
                     {isStudent ? (
-                      <GraduationCap className="w-4 h-4 text-indigo-400" />
+                      <GraduationCap className="w-4 h-4 text-indigo-600" />
                     ) : (
-                      <Shield className="w-4 h-4 text-amber-400" />
+                      <Shield className="w-4 h-4 text-amber-600" />
                     )}
                     <div className="text-left hidden sm:block">
-                      <p className="font-bold text-white text-xs leading-tight">{currentUser.name}</p>
-                      <p className="text-[10px] text-slate-400 font-mono">
+                      <p className="font-extrabold text-slate-900 text-xs leading-tight">{currentUser.name}</p>
+                      <p className="text-[10px] text-slate-500 font-mono font-medium">
                         {isStudent
                           ? `${currentUser.rollNumber} • Sem ${currentUser.semesterCode} (${currentUser.branch})`
                           : `${currentUser.facultyId}`}
@@ -112,7 +112,7 @@ export const Navbar: React.FC = () => {
                   <button
                     onClick={() => setIsAuthModalOpen(true)}
                     title="Switch Account / Role"
-                    className="p-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition ml-1"
+                    className="p-1.5 text-xs bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 rounded-xl font-bold shadow-xs border border-slate-200 transition ml-1"
                   >
                     Switch
                   </button>
@@ -120,7 +120,7 @@ export const Navbar: React.FC = () => {
                   <button
                     onClick={logout}
                     title="Logout"
-                    className="p-1.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition"
+                    className="p-1.5 text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                   </button>
@@ -128,7 +128,7 @@ export const Navbar: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center gap-2"
+                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-extrabold rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-2"
                 >
                   <UserCheck className="w-4 h-4" /> Login Portal
                 </button>
