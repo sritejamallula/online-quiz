@@ -1,29 +1,33 @@
 # 🎓 B.Tech Interactive Online Quiz & Leaderboard System
 
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20GitHub%20Pages-4F46E5?logo=githubpages&logoColor=white)](https://sritejamallula.github.io/online-quiz/)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A modern, full-stack responsive web application tailored for the B.Tech Computer Science & Engineering (BVCEC Odalarevu R23 Curriculum Pattern). The platform features an 8-semester curriculum catalog, dedicated 100% subject-accurate evaluation quizzes with step-by-step GeeksforGeeks-style technical explanations, an automatic time-based promotion engine, dynamic real-time leaderboards, and faculty analytics.
+> 🌐 **Live Application**: [https://sritejamallula.github.io/online-quiz/](https://sritejamallula.github.io/online-quiz/)
+
+A modern, world-class responsive web application crafted with a premium light theme palette, soft glassmorphic depth, and bespoke typography. Designed for the B.Tech Computer Science & Engineering curriculum (BVCEC Odalarevu R23 Pattern), the platform features an 8-semester curriculum catalog, dedicated 100% subject-accurate evaluation quizzes with step-by-step GeeksforGeeks-style technical explanations, an automatic time-based promotion engine, dynamic real-time leaderboards, and faculty analytics.
 
 ---
 
 ## 🚀 Key Features
 
 ### 👨‍🎓 Student Features
+- **World-Class Light UI/UX**: Soft glassmorphic panels, crisp slate typography, glowing pastel badges, and responsive modern layouts.
 - **8-Semester Core Curriculum (Sem 1-1 to Sem 4-2)**: Access 40 core theory engineering subjects mapped strictly to the B.Tech CSE syllabus.
-- **Explicit Semester Selector**: Students can log in with their Roll Number (e.g. `23A91A05XX`), Branch (`CSE`, `AI&DS`, `IT`), Admission Year, and select their current active semester.
+- **Explicit Semester Selector**: Students can log in with their Roll Number (e.g. `23A91A05XX`), Branch (`CSE`, `AI&DS`, `IT`, `ECE`, `EEE`), Admission Year, and select their current active semester.
 - **Automatic Timeline Promotion Engine**: Automatically calculates elapsed academic months based on admission batch year (e.g., 2024 admission batch \(\rightarrow\) Sem 2-1) and promotes students over time.
-- **10-Question Evaluation Quizzes**: Every quiz dynamically samples 10 subject-specific questions with a strict **4 Easy, 3 Moderate, 3 Hard** difficulty split.
+- **10-Question Evaluation Quizzes**: Clean, distraction-free quiz interface with 10 questions per quiz and clear status indicators.
 - **GeeksforGeeks-Style Explanations**: Review detailed step-by-step technical rationale and code snippets for every question upon completion.
 - **10-Minute Timer & Palette Grid**: Real-time countdown timer with 1–10 interactive question palette grid tracking answered, flagged, and unvisited questions.
 
 ### 🏆 Dynamic Real-Time Leaderboard
-- **Podium Display**: Top 3 students featured in Gold 🥇, Silver 🥈, and Bronze 🥉 visual podium cards.
+- **Glossy Podium Display**: Top 3 students featured in Gold 🥇, Silver 🥈, and Bronze 🥉 metallic pastels.
 - **Live Rank Computation**: Ranks are calculated dynamically based on total score, accuracy percentage, and quizzes attempted.
-- **Clean Initial State**: Zero mock/fake students; builds dynamically from authentic quiz submissions.
+- **Branch Filtering & Search**: Instant filtering by branch (`CSE`, `AI&DS`, `IT`, `ECE`, `EEE`) and search by student roll number or name.
 
 ### 👩‍🏫 Faculty Dashboard
 - **Class Analytics**: Full access to overall class accuracy, top performers, topic breakdown, and configurable quiz parameters (timer limit, pass percentage, instant feedback).
