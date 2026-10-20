@@ -1,141 +1,238 @@
-# 🎓 B.Tech Interactive Online Quiz & Leaderboard System
+# 🎓 AcademiaQuiz - System Documentation
+## B.Tech Online Quiz & Real-Time Leaderboard System
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20GitHub%20Pages-4F46E5?logo=githubpages&logoColor=white)](https://sritejamallula.github.io/online-quiz/)
-[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-> 🌐 **Live Application**: [https://sritejamallula.github.io/online-quiz/](https://sritejamallula.github.io/online-quiz/)
-
-A modern, world-class responsive web application crafted with a premium light theme palette, soft glassmorphic depth, and bespoke typography. Designed for the B.Tech Computer Science & Engineering curriculum (BVCEC Odalarevu R23 Pattern), the platform features an 8-semester curriculum catalog, dedicated 100% subject-accurate evaluation quizzes with step-by-step GeeksforGeeks-style technical explanations, an automatic time-based promotion engine, dynamic real-time leaderboards, and faculty analytics.
+> **Repository**: [github.com/sritejamallula/online-quiz](https://github.com/sritejamallula/online-quiz)  
+> **Live Web Application**: [https://sritejamallula.github.io/online-quiz/](https://sritejamallula.github.io/online-quiz/)  
+> **Target Curriculum**: B.Tech CSE / IT (BVCEC Odalarevu R23 Autonomous Pattern)  
 
 ---
 
-## 🚀 Key Features
+## 1. Executive Summary
 
-### 👨‍🎓 Student Features
-- **World-Class Light UI/UX**: Soft glassmorphic panels, crisp slate typography, glowing pastel badges, and responsive modern layouts.
-- **8-Semester Core Curriculum (Sem 1-1 to Sem 4-2)**: Access 40 core theory engineering subjects mapped strictly to the B.Tech CSE syllabus.
-- **Explicit Semester Selector**: Students can log in with their Roll Number (e.g. `23A91A05XX`), Branch (`CSE`, `AI&DS`, `IT`, `ECE`, `EEE`), Admission Year, and select their current active semester.
-- **Automatic Timeline Promotion Engine**: Automatically calculates elapsed academic months based on admission batch year (e.g., 2024 admission batch \(\rightarrow\) Sem 2-1) and promotes students over time.
-- **10-Question Evaluation Quizzes**: Clean, distraction-free quiz interface with 10 questions per quiz and clear status indicators.
-- **GeeksforGeeks-Style Explanations**: Review detailed step-by-step technical rationale and code snippets for every question upon completion.
-- **10-Minute Timer & Palette Grid**: Real-time countdown timer with 1–10 interactive question palette grid tracking answered, flagged, and unvisited questions.
-
-### 🏆 Dynamic Real-Time Leaderboard
-- **Glossy Podium Display**: Top 3 students featured in Gold 🥇, Silver 🥈, and Bronze 🥉 metallic pastels.
-- **Live Rank Computation**: Ranks are calculated dynamically based on total score, accuracy percentage, and quizzes attempted.
-- **Branch Filtering & Search**: Instant filtering by branch (`CSE`, `AI&DS`, `IT`, `ECE`, `EEE`) and search by student roll number or name.
-
-### 👩‍🏫 Faculty Dashboard
-- **Class Analytics**: Full access to overall class accuracy, top performers, topic breakdown, and configurable quiz parameters (timer limit, pass percentage, instant feedback).
+**AcademiaQuiz** is a responsive, multi-device academic evaluation and ranking platform designed for engineering undergraduates. It provides:
+1. **Zero Dummy Users**: No hardcoded mock profiles or simulated scores. Only real classmates who register on their phones, laptops, or desktops appear.
+2. **Real-Time Cross-Device Cloud Sync**: Continuous synchronization of registrations and quiz submissions across all connected devices using an active REST cloud database.
+3. **8-Semester Engineering Curriculum**: 40 theory core subjects mapped from Semester 1-1 to Semester 4-2, each with subject-accurate 10-question evaluation quizzes and step-by-step technical explanations.
+4. **Dynamic Leaderboard & Podium**: Real-time rank calculation and metallic 3D podium for top scorers, plus a complete searchable roster of all enrolled classmates.
+5. **Faculty Management Portal**: Class analytics, submission logs, and assessment controls (timer duration, pass mark, negative marking).
 
 ---
 
-## 📚 8-Semester B.Tech Core Curriculum Structure
+## 2. System Architecture
 
-### 📍 Semester 1-1 (Year 1, Sem 1)
-- **Linear Algebra & Calculus (LAC)** (`BS1101`) - Matrices, Rank, Eigenvalues, Cayley-Hamilton, Multiple Integrals.
-- **Applied Chemistry** (`BS1102`) - Water Technology (EDTA, Zeolites), Nernst Equation, Teflon, Corrosion, Li-ion Batteries.
-- **C Programming & Problem Solving** (`CS1101`) - Control Flow, Pointers, Arrays, Dynamic Memory Allocation, Unions.
-- **Basic Civil & Mechanical Engg (BCME)** (`ES1101`) - Theodolite Surveying, Portland Cement C3S, 4-stroke IC Engines, Lancashire Boilers, TIG Welding.
-
-### 📍 Semester 1-2 (Year 1, Sem 2)
-- **Applied Physics** (`BS1201`) - Thin Film Interference, De Broglie Wavelength, He-Ne Laser, Fermi Level, Meissner Effect.
-- **Mathematics-II (M-2)** (`BS1202`) - Differential Equations, Laplace Transforms, Vector Calculus, Gauss/Stokes Theorems.
-- **Basic Electrical & Electronics (BEEE)** (`ES1201`) - KCL/KVL, Star-Delta 3-Phase Systems, Ideal Transformers, Zener Regulation, BJT Beta.
-- **Data Structures (DS)** (`CS1201`) - Stacks, Queues, Linked Lists, Trees, In-order BST Traversal, Circular Queues.
-- **Communicative English** (`HS1201`) - Vocabulary, Passive Voice, Subject-Verb Agreement, Précis Writing, IEEE Report Writing.
-
-### 📍 Semester 2-1 (Year 2, Sem 1)
-- **Discrete Mathematics & Graph Theory (DMGT)** (`CS2101`) - Propositional Logic, Eulerian Circuits, Chromatic Number, Recurrences, Posets.
-- **Database Management Systems (DBMS)** (`CS2102`) - Relational Algebra, ER Diagrams, SQL NULLs, Functional Dependencies, Lossless Decomposition, 3NF/BCNF, B+ Trees, Strict 2PL.
-- **Java Programming (JAVA)** (`CS2103`) - OOP, Exception Handling, Multithreading, HashMap Load Factor, Streams API, Metaspace.
-- **Advanced Data Structures (ADS)** (`CS2104`) - Red-Black Trees, AVL Balance Factor, Bellman-Ford Shortest Path, Master Theorem, Floyd-Warshall.
-- **Universal Human Values (UHV)** (`HS2101`) - Self-Exploration, Natural Acceptance, Co-existence (Self & Body), Trust (Vishwas), 4 Orders of Nature.
-
-### 📍 Semester 2-2 (Year 2, Sem 2)
-- **Python Programming** (`CS2205`) - Tuples, Exponentiation Precedence, List Comprehensions, Decorators, GIL.
-- **Theory of Computation / Automata (FLAT)** (`CS2201`) - DFA/NFA, Pushdown Automata, Pumping Lemma, CNF Grammars, Halting Problem.
-- **Computer Organization & Architecture (COA)** (`CS2202`) - Instruction Set Architecture, Pipelining Hazards, Cache Mapping, DMA.
-- **Operating Systems (OS)** (`CS2203`) - SJF Scheduling, Deadlocks (Banker's Algorithm), Virtual Memory, Belady's Anomaly, Mutex, Peterson's Algorithm.
-- **Software Engineering (SE)** (`CS2204`) - Agile Scrum, SDLC Spiral Model, Black Box Testing, UML Composition, Cyclomatic Complexity.
-- **Managerial Economics & Financial Analysis (MEFA)** (`HS2201`) - Break-Even Point, Elasticity of Demand, Real Accounts, Current Ratio, NPV & IRR.
-
-### 📍 Semester 3-1 (Year 3, Sem 1)
-- **Computer Networks** (`23AD5T03`) - OSI/TCP-IP Models, Subnetting /24, TCP 3-Way Handshake, OSPF Dijkstra, HTTP/2, BGP.
-- **Machine Learning** (`23AD6T05`) - Supervised/Unsupervised, SVM Kernel Trick, K-Means, Precision/Recall, Lasso vs Ridge, XGBoost.
-- **Exploratory Data Analysis (EDA)** (`23AD5D03`) - Box Plots, Pearson Correlation, One-Hot Encoding, Min-Max Normalization, Chi-Square Test.
-- **Full Stack Development (FSD-II)** (`23CS5S06`) - React Virtual DOM, Express Middleware, REST APIs, JWT Authentication, WebSockets.
-- **Artificial Intelligence** (`23AD5T02`) - A* Search f(n)=g(n)+h(n), Minimax Alpha-Beta Pruning, Turing Test, CSP, Q-Learning.
-
-### 📍 Semester 3-2 (Year 3, Sem 2)
-- **Microprocessors & Microcontrollers (MPMC)** (`23AD6D06`) - 8086 20-bit Address Bus, 8051 128-byte RAM, 8255 PPI, ALE Signal.
-- **Cryptography & Network Security (CNS)** (`CS3202`) - AES, RSA Prime Factorization, Diffie-Hellman, SHA-256, Digital Signatures, Firewalls.
-- **Data Warehousing & Data Mining (DWDM)** (`CS3203`) - OLAP vs OLTP, Star/Snowflake Schemas, Apriori Association Rules, ETL Pipelines.
-- **Cloud Computing** (`CS3204`) - IaaS/PaaS/SaaS, Type-1 Hypervisors, AWS S3, Docker vs VMs, Serverless Lambda, IaC.
-- **Professional Ethics & Cyber Laws** (`HS3201`) - IEEE Code of Ethics, Indian IT Act 2000 Sec 66, IPR Patents, Whistleblowing, GDPR.
-
-### 📍 Semester 4-1 (Year 4, Sem 1)
-- **DevOps** (`23AD7D09`) - CI/CD Pipelines, Dockerfiles, Kubernetes Pods, Jenkinsfile, Terraform IaC, Prometheus & Grafana.
-- **Deep Learning** (`23CS7T13`) - CNN Max Pooling, Sigmoid/ReLU Activations, Transformer Self-Attention, LSTMs, GANs, Adam Optimizer.
-- **Human Resource & Project Management** (`23HM7T07`) - Critical Path Method (CPM/PERT), COCOMO KLOC, Maslow Hierarchy, EVM.
-- **Big Data Analytics** (`CS4101`) - Hadoop HDFS NameNode, MapReduce Shuffle & Sort, Spark RDDs, 5 V's of Big Data, Kafka, CAP Theorem.
-- **Information Security & Ethical Hacking** (`CS4102`) - SQL Injection, XSS, Nmap, Burp Suite, CSRF Tokens, Metasploit, ASLR.
-
-### 📍 Semester 4-2 (Year 4, Sem 2)
-- **Cyber Security & Forensics** (`CS4201`) - Chain of Custody, Hardware Write Blockers, Memory Forensics (Volatility), File Carving.
-- **Distributed Systems** (`CS4202`) - Raft/Paxos Consensus, Lamport Logical Clocks, RPC Protocol, 2PC Transactions, Vector Clocks.
-- **Software Project Management** (`CS4203`) - Risk Exposure Formula, Agile Burn-Down Charts, SQA vs SQC, CMMI Level 5, Function Points.
-- **Prompt Engineering & Generative AI** (`CS4204`) - Few-Shot Prompting, Chain-of-Thought, RAG Vector Search, LLM Temperature, ReAct Framework, LoRA.
-- **Natural Language Processing (NLP)** (`CS4205`) - Stemming vs Lemmatization, TF-IDF, Word2Vec, BERT Masked LM, BLEU/ROUGE Scores.
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        User Browser Clients                            │
+│  ┌───────────────────────┐             ┌────────────────────────────┐  │
+│  │   Mobile Browser      │             │     Laptop / Desktop       │  │
+│  │  (Student in Class)   │             │   (Faculty / Student)      │  │
+│  └───────────┬───────────┘             └─────────────┬──────────────┘  │
+└──────────────┼───────────────────────────────────────┼─────────────────┘
+               │                                       │
+               ▼                                       ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│               AcademiaQuiz Single Page Application (SPA)               │
+│                                                                        │
+│   ┌────────────────────────────────────────────────────────────────┐   │
+│   │                      React Context State                       │   │
+│   │   - registeredStudents: StudentProfile[]                       │   │
+│   │   - quizAttempts: QuizAttempt[]                                │   │
+│   │   - currentStudent / facultyMode                               │   │
+│   │   - activeSubject / currentQuiz / activeSemester               │   │
+│   └──────────────────────────────┬─────────────────────────────────┘   │
+│                                  │                                     │
+│   ┌──────────────────────────────▼─────────────────────────────────┐   │
+│   │                   CloudSync Service Layer                      │   │
+│   │   - BroadcastChannel ("quiz_sync_channel")                     │   │
+│   │   - Deduplication & Conflict-Free Merge Rules                  │   │
+│   │   - Debounced REST Pushes & Polling Engine (8s cycle)          │   │
+│   └──────────────────────────────┬─────────────────────────────────┘   │
+└──────────────────────────────────┼─────────────────────────────────────┘
+                                   │ HTTPS GET / PUT
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                Cloud REST Persistence Backend                          │
+│               (https://api.restful-api.dev/objects/...)                │
+│                                                                        │
+│    Payload:                                                            │
+│    {                                                                   │
+│      "registeredStudents": [ { rollNumber, name, branch, ... } ],      │
+│      "quizAttempts": [ { id, studentRoll, quizId, score, ... } ],      │
+│      "lastSyncedAt": "2026-10-20T..."                                  │
+│    }                                                                   │
+└────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🛠️ Tech Stack
+## 3. Real-Time Cloud Sync Engine (`cloudSync.ts`)
 
-- **Frontend Framework**: [React 18](https://reactjs.org/) with [TypeScript](https://www.typescriptlang.org/)
-- **Build Tool**: [Vite 6](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) with Glassmorphism & Custom Glow Effects
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Celebration Animations**: [Canvas Confetti](https://www.npmjs.com/package/canvas-confetti)
+### Core Functionality
+- **Endpoint**: `https://api.restful-api.dev/objects/ff808181a09d98f701a15976d9952db0`
+- **Methodology**: HTTP REST `GET` (Fetch) and `PUT` (Mutate) with stringified JSON payload encapsulation (`data.payload`).
+- **CORS Handling**: Native `Access-Control-Allow-Origin: *` support allows direct client-side fetch from GitHub Pages without requiring custom proxy servers.
 
----
+### Synchronization Triggers
+| Trigger | Frequency / Event | Action Taken |
+| :--- | :--- | :--- |
+| **Background Polling** | Every 8,000 ms (8 sec) | Fetches latest registered students and quiz attempts from cloud. |
+| **Window Focus / Tab Resume** | On `window.onfocus` | Instantly refreshes state when a student unlocks their phone or switches back to the tab. |
+| **Cross-Tab Messaging** | On `BroadcastChannel.postMessage` | Synchronizes open tabs on the same device within 5 ms. |
+| **Student Registration** | Synchronous on Form Submit | Pushes the newly registered classmate to cloud immediately. |
+| **Quiz Submission** | Synchronous on Test Submit | Pushes score attempt, updates student aggregate metrics, and recalculates leaderboards. |
+| **Manual Refresh** | User click on Navbar pill | Forces an immediate cloud fetch and sync status badge update. |
 
-## 💻 Local Development Setup
-
-### Prerequisites
-- Node.js (`v18+` recommended)
-- npm or yarn
-
-### Installation Steps
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/sritejamallula/online-quiz.git
-   cd online-quiz
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**:
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:5173/` in your browser.
-
-4. **Build for production**:
-   ```bash
-   npm run build
-   ```
+### Conflict Resolution & De-duplication Rules
+1. **Students**: Keyed uniquely by `rollNumber.trim().toUpperCase()`. If duplicate registrations occur, the entry with the latest `registeredAt` timestamp is preserved.
+2. **Quiz Attempts**: Keyed uniquely by UUID `attempt.id`. Local and remote arrays are combined with Set-based ID deduplication to prevent duplicate submissions.
+3. **Offline Resilience**: State is backed up in browser `localStorage` (`btech_registered_students_v2`, `btech_quiz_attempts_v2`). If network connectivity is lost, attempts are cached and uploaded on the next successful poll.
 
 ---
 
-## 📄 License
+## 4. User Workflows
 
-This project is open-source and available under the [MIT License](LICENSE).
+### 4.1 Student Experience
+1. **Login & Registration**:
+   - Opens the application in a light-mode glassmorphic interface.
+   - Enters Full Name, University Roll Number (e.g. `23A91A0501`), Branch (`CSE`, `AI&DS`, `IT`, `ECE`, `EEE`), and Admission Year.
+   - Profile is saved and synced to the cloud.
+2. **Subject Selection**:
+   - Filter by semester (`Sem 1-1` to `Sem 4-2`) or view all 40 engineering subjects.
+   - Progress indicators show completion status for each subject.
+3. **Examination Interface**:
+   - Click "Start Quiz" on any unit module.
+   - 10 Subject-accurate questions with a 10-minute countdown timer.
+   - Color-coded question palette grid (Answered, Flagged, Unanswered).
+   - Confirmation dialog before final submission.
+4. **Performance Evaluation**:
+   - High scores trigger celebratory confetti.
+   - Shows Score (out of 10), Percentage, Accuracy, and Percentile Rank.
+   - Step-by-step GeeksforGeeks-style technical rationale with code snippets and theoretical explanations for all 10 questions.
+
+### 4.2 Leaderboard & Classmate Roster
+- **🏆 Score Leaderboard Tab**:
+  - Dynamically ranks students by: $\text{Rank Score} = \text{Total Points} + (\text{Accuracy} \times 0.1)$.
+  - Metallic gold, silver, and bronze 3D podium highlights the top 3 scorers.
+  - Displays rank, student name, roll number, branch, quizzes attempted, average score, and total points.
+  - Active student row highlighted with a `YOU` badge.
+- **👥 All Registered Classmates Tab**:
+  - Complete real-time roster of all registered classmates across all devices.
+  - Filterable by branch and searchable by roll number or name.
+  - Shows when each student registered and how many quizzes they have completed.
+
+### 4.3 Faculty Portal
+- **KPI Metrics Cards**:
+  - Live count of enrolled classmates.
+  - Real-time class average accuracy %.
+  - Overall pass rate %.
+  - Total active curriculum subjects.
+- **Assessment Parameters**:
+  - Timer duration in minutes.
+  - Pass cutoff percentage.
+  - Instant question feedback toggle.
+  - Negative marking toggle.
+- **Audit Logs**:
+  - Chronological table of all submissions with student details, quiz ID, score, time taken, and pass/fail status.
+
+---
+
+## 5. Data Models & Schemas
+
+### StudentProfile
+```typescript
+interface StudentProfile {
+  id: string;               // e.g. "stu_1729431000"
+  name: string;             // e.g. "Sriteja Mallula"
+  rollNumber: string;       // e.g. "23A91A0501"
+  email: string;            // e.g. "23A91A0501@bvcec.edu.in"
+  branch: 'CSE' | 'AI&DS' | 'IT' | 'ECE' | 'EEE';
+  admissionYear: number;    // e.g. 2023
+  currentSemester: number;  // 1 to 8
+  quizzesAttempted: number;
+  averageScore: number;     // 0 to 100
+  totalPoints: number;
+  registeredAt?: string;    // ISO 8601
+}
+```
+
+### QuizAttempt
+```typescript
+interface QuizAttempt {
+  id: string;               // UUID v4
+  studentRoll: string;      // e.g. "23A91A0501"
+  studentName: string;
+  quizId: string;           // e.g. "cs2102-m1"
+  subjectCode: string;      // e.g. "CS2102"
+  score: number;            // 0 - 10
+  totalQuestions: number;   // 10
+  percentage: number;       // 0 - 100
+  passed: boolean;
+  timeSpentSeconds: number;
+  completedAt: string;      // ISO 8601
+}
+```
+
+### CloudSyncPayload
+```typescript
+interface CloudSyncPayload {
+  registeredStudents: StudentProfile[];
+  quizAttempts: QuizAttempt[];
+  lastSyncedAt: string;
+}
+```
+
+---
+
+## 6. Curriculum Mapping (40 Core Subjects)
+
+| Sem | Code | Subject Name | Key Syllabus Areas |
+| :--- | :--- | :--- | :--- |
+| **1-1** | `BS1101` | Linear Algebra & Calculus | Matrices, Eigenvalues, Cayley-Hamilton, Multiple Integrals |
+| **1-1** | `BS1102` | Applied Chemistry | EDTA Water Hardness, Zeolites, Batteries, Corrosion, Polymers |
+| **1-1** | `CS1101` | C Programming & Problem Solving | Control Flow, Pointers, Arrays, Dynamic Memory, Recursion |
+| **1-1** | `ES1101` | Basic Civil & Mechanical Engg | Theodolite, 4-Stroke IC Engines, Boilers, TIG/MIG Welding |
+| **1-2** | `BS1201` | Applied Physics | Wave Optics, Lasers, Quantum Mechanics, Superconductivity |
+| **1-2** | `BS1202` | Mathematics-II (M-2) | Differential Equations, Laplace Transforms, Vector Calculus |
+| **1-2** | `ES1201` | Basic Electrical & Electronics | KCL/KVL, Star-Delta, Transformers, Zener Diodes, BJT |
+| **1-2** | `CS1201` | Data Structures | Stacks, Queues, Linked Lists, Binary Trees, Circular Queues |
+| **1-2** | `HS1201` | Communicative English | Grammar, Technical Vocabulary, Précis Writing, IEEE Formats |
+| **2-1** | `CS2101` | Discrete Mathematics (DMGT) | Logic, Graph Theory, Eulerian Circuits, Recurrences, Posets |
+| **2-1** | `CS2102` | Database Management Systems | Relational Algebra, Normalization (3NF/BCNF), B+ Trees, 2PL |
+| **2-1** | `CS2103` | Java Programming | OOP, Multithreading, Exception Handling, Collections Framework |
+| **2-1** | `CS2104` | Advanced Data Structures | Red-Black Trees, AVL Trees, Bellman-Ford, Master Theorem |
+| **2-1** | `HS2101` | Universal Human Values (UHV) | Self-Exploration, Natural Acceptance, Human Relations |
+| **2-2** | `CS2205` | Python Programming | Comprehensions, Decorators, Generators, GIL, Tuples |
+| **2-2** | `CS2201` | Theory of Computation (FLAT) | DFA/NFA, Pushdown Automata, Pumping Lemma, Turing Machines |
+| **2-2** | `CS2202` | Computer Organization (COA) | Pipeline Hazards, Cache Mapping, Memory Hierarchy, DMA |
+| **2-2** | `CS2203` | Operating Systems | Process Scheduling, Deadlocks, Virtual Memory, Semaphores |
+| **2-2** | `CS2204` | Software Engineering | Agile Scrum, Spiral Model, Black Box Testing, UML |
+| **2-2** | `HS2201` | Managerial Economics (MEFA) | Break-Even Point, Elasticity, Accounting Ratios, NPV/IRR |
+| **3-1** | `23AD5T03` | Computer Networks | TCP/IP, Subnetting, 3-Way Handshake, OSPF Dijkstra, BGP |
+| **3-1** | `23AD6T05` | Machine Learning | SVM Kernel Trick, K-Means, Regularization, Precision/Recall |
+| **3-1** | `23AD5D03` | Exploratory Data Analysis | Outlier Detection, Correlation, Normalization, Chi-Square |
+| **3-1** | `23CS5S06` | Full Stack Development | React Virtual DOM, Express Middleware, JWT, REST, WebSockets |
+| **3-1** | `23AD5T02` | Artificial Intelligence | A* Search, Minimax Alpha-Beta Pruning, Heuristics |
+| **3-2** | `23AD6D06` | Microprocessors & Microcontrollers | 8086 Instruction Set, 8051 Architecture, 8255 PPI |
+| **3-2** | `CS3202` | Cryptography & Network Security | AES, RSA Factorization, Diffie-Hellman, SHA-256 |
+| **3-2** | `CS3203` | Data Warehousing & Data Mining | OLAP vs OLTP, Star Schema, Apriori Association Rules |
+| **3-2** | `CS3204` | Cloud Computing | IaaS/PaaS/SaaS, Hypervisors, S3 Storage, Docker, Serverless |
+| **3-2** | `HS3201` | Professional Ethics & Cyber Laws | IT Act 2000 Section 66, IPR, Patents, Whistleblowing, GDPR |
+| **4-1** | `23AD7D09` | DevOps | CI/CD Pipelines, Docker, Kubernetes Pods, Jenkins, Terraform |
+| **4-1** | `23CS7T13` | Deep Learning | CNNs, ReLU, Transformer Self-Attention, LSTMs, Adam |
+| **4-1** | `23HM7T07` | HR & Project Management | CPM/PERT Critical Path, COCOMO Estimation, Maslow |
+| **4-1** | `CS4101` | Big Data Analytics | Hadoop HDFS NameNode, MapReduce, Spark RDDs, CAP Theorem |
+| **4-1** | `CS4102` | Info Security & Ethical Hacking | SQL Injection, XSS, Nmap, Burp Suite, CSRF Tokens, ASLR |
+| **4-2** | `CS4201` | Cyber Security & Forensics | Chain of Custody, Hardware Write Blockers, Memory Forensics |
+| **4-2** | `CS4202` | Distributed Systems | Raft/Paxos Consensus, Lamport Logical Clocks, RPC, 2PC |
+| **4-2** | `CS4203` | Software Project Management | Risk Exposure, Agile Burn-Down Charts, CMMI Level 5 |
+| **4-2** | `CS4204` | Prompt Engg & Generative AI | Few-Shot Prompting, Chain-of-Thought, RAG, LoRA Fine-Tuning |
+| **4-2** | `CS4205` | Natural Language Processing | Stemming/Lemmatization, TF-IDF, Word2Vec, BERT Masked LM |
+
+---
+
+## 7. Build & Deployment Specifications
+
+- **Build System**: Vite 6 + TypeScript 5.5 + Tailwind CSS 4
+- **Output Target**: `./dist/` containing `index.html` and `./assets/`
+- **Hosting Strategy**: GitHub Pages static website hosting
+- **Single Page Application (SPA) Strategy**: Compiled bundles in `dist/assets` are copied directly to root `assets/` and `index.html` with relative paths (`./assets/...`) ensuring immediate compatibility with GitHub Pages URL path `/online-quiz/`.
