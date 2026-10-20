@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
   User,
   StudentProfile,
@@ -12,10 +12,18 @@ import {
   Branch,
   SemesterCode,
   AcademicYear,
-  Semester
+  Semester,
+  CloudSyncStatus
 } from '../types';
-import { subjectsData, initialLeaderboardData } from '../data/quizData';
+import { subjectsData } from '../data/quizData';
 import { calculateSemesterFromAdmission, checkAndPromoteStudent } from '../utils/promotionEngine';
+import {
+  fetchFromCloud,
+  pushToCloud,
+  mergeStudents,
+  mergeAttempts,
+  onCrossTabSync
+} from '../services/cloudSync';
 
 export type AppView =
   | 'SUBJECTS'
@@ -33,11 +41,23 @@ interface QuizContextType {
   activeSubject: Subject | null;
   activeLesson: Lesson | null;
   activeQuiz: Quiz | null;
+  registeredStudents: StudentProfile[];
   quizAttempts: QuizAttempt[];
   leaderboard: LeaderboardEntry[];
   facultyConfig: FacultyConfig;
   theme: 'dark' | 'light';
   lastCompletedAttempt: QuizAttempt | null;
+  
+  // Real-time Cloud Sync
+  cloudSyncStatus: CloudSyncStatus;
+  lastSyncedAt: Date | null;
+  syncCloudData: () => Promise<void>;
+
+  // Auth Modal Controls
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
+  openAuthModal: () => void;
+  closeAuthModal: () => void;
   
   // Semester & Year Filter State
   selectedSemesterFilter: 'ALL' | SemesterCode;
@@ -69,6 +89,7 @@ const QuizContext = createContext<QuizContextType | undefined>(undefined);
 const STORAGE_KEYS = {
   USER: 'quiz_portal_user',
   ATTEMPTS: 'quiz_portal_attempts',
+  STUDENTS: 'quiz_portal_registered_students',
   CONFIG: 'quiz_portal_config',
   THEME: 'quiz_portal_theme',
 };
@@ -81,14 +102,13 @@ const DEFAULT_FACULTY_CONFIG: FacultyConfig = {
 };
 
 export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // 1. Initial State Loaders
+  // 1. Initial State Loaders (Cached from LocalStorage for instantaneous load)
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.USER);
       if (!saved) return null;
       const parsed = JSON.parse(saved);
       if (parsed && typeof parsed === 'object') {
-        // Sanitize invalid semesterCode if corrupted in previous runs
         if (parsed.semesterCode === 'NaN-NaN' || !parsed.semesterCode) {
           parsed.semesterCode = '1-1';
         }
@@ -98,6 +118,15 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch {
       localStorage.removeItem(STORAGE_KEYS.USER);
       return null;
+    }
+  });
+
+  const [registeredStudents, setRegisteredStudents] = useState<StudentProfile[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.STUDENTS);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
     }
   });
 
@@ -123,25 +152,99 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.THEME);
-      return (saved as 'dark' | 'light') || 'dark';
+      return (saved as 'dark' | 'light') || 'light';
     } catch {
-      return 'dark';
+      return 'light';
     }
   });
+
+  // Cloud Sync State
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<CloudSyncStatus>('IDLE');
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+
+  // Auth Modal State
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const openAuthModal = () => setIsAuthModalOpen(true);
+  const closeAuthModal = () => setIsAuthModalOpen(false);
 
   // Filters State
   const [selectedSemesterFilter, setSelectedSemesterFilter] = useState<'ALL' | SemesterCode>('ALL');
   const [selectedYearFilter, setSelectedYearFilter] = useState<'ALL' | AcademicYear>('ALL');
   const [promotionAlert, setPromotionAlert] = useState<string | null>(null);
 
-  // 2. Navigation State
+  // Navigation State
   const [activeView, setActiveView] = useState<AppView>('SUBJECTS');
   const [activeSubject, setActiveSubject] = useState<Subject | null>(subjectsData[0]);
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
   const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
   const [lastCompletedAttempt, setLastCompletedAttempt] = useState<QuizAttempt | null>(null);
 
-  // Auto Semester Promotion Check on Mount / User change
+  // Refs for tracking latest state inside timers/callbacks without re-triggering effects
+  const studentsRef = useRef(registeredStudents);
+  studentsRef.current = registeredStudents;
+
+  const attemptsRef = useRef(quizAttempts);
+  attemptsRef.current = quizAttempts;
+
+  // 2. Real-Time Cloud Synchronization Logic
+  const syncCloudData = useCallback(async () => {
+    setCloudSyncStatus('SYNCING');
+    try {
+      const cloudData = await fetchFromCloud();
+      if (cloudData) {
+        const mergedStudents = mergeStudents(studentsRef.current, cloudData.registeredStudents);
+        const mergedAttempts = mergeAttempts(attemptsRef.current, cloudData.quizAttempts);
+
+        setRegisteredStudents(mergedStudents);
+        setQuizAttempts(mergedAttempts);
+        setLastSyncedAt(new Date());
+        setCloudSyncStatus('SYNCED');
+
+        // If local had students or attempts that were missing in cloud, push merged back to cloud
+        const localHasNewStudents = mergedStudents.length > cloudData.registeredStudents.length;
+        const localHasNewAttempts = mergedAttempts.length > cloudData.quizAttempts.length;
+
+        if (localHasNewStudents || localHasNewAttempts) {
+          await pushToCloud(mergedStudents, mergedAttempts);
+        }
+      } else {
+        setCloudSyncStatus('IDLE');
+      }
+    } catch (err) {
+      console.warn('Realtime cloud sync note:', err);
+      setCloudSyncStatus('ERROR');
+    }
+  }, []);
+
+  // Periodic Background Polling & Event-Driven Sync
+  useEffect(() => {
+    // Immediate initial sync
+    syncCloudData();
+
+    // Poll every 8 seconds for real-time classmate updates across devices
+    const intervalId = setInterval(() => {
+      syncCloudData();
+    }, 8000);
+
+    // Sync on tab focus
+    const handleFocus = () => {
+      syncCloudData();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    // Listen to cross-tab broadcast updates
+    const unsubscribeCrossTab = onCrossTabSync(() => {
+      syncCloudData();
+    });
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('focus', handleFocus);
+      unsubscribeCrossTab();
+    };
+  }, [syncCloudData]);
+
+  // Auto Semester Promotion Check
   useEffect(() => {
     if (currentUser && currentUser.role === 'STUDENT') {
       const check = checkAndPromoteStudent(currentUser.semesterCode, currentUser.admissionYear);
@@ -161,7 +264,7 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Save to localStorage
+  // Persist Local Cache to LocalStorage
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
@@ -169,6 +272,10 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem(STORAGE_KEYS.USER);
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(registeredStudents));
+  }, [registeredStudents]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.ATTEMPTS, JSON.stringify(quizAttempts));
@@ -187,19 +294,37 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [theme]);
 
-  // Compute Dynamic Leaderboard
+  // Compute Dynamic Leaderboard from Real Registered Students
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   useEffect(() => {
     const map = new Map<string, LeaderboardEntry>();
 
-    initialLeaderboardData.forEach((entry) => {
-      map.set(entry.studentRoll, { ...entry });
+    // 1. Populate all real registered students first
+    registeredStudents.forEach((student) => {
+      if (!student.rollNumber) return;
+      const key = student.rollNumber.trim().toUpperCase();
+      map.set(key, {
+        studentRoll: key,
+        studentName: student.name,
+        branch: student.branch,
+        semesterCode: student.semesterCode,
+        admissionYear: student.admissionYear,
+        registeredAt: student.registeredAt,
+        quizzesAttempted: 0,
+        totalScore: 0,
+        totalPossibleScore: 0,
+        accuracyPercentage: 0,
+        isRegisteredOnly: true,
+      });
     });
 
+    // 2. Compute scores and accuracy from real quiz attempts
     quizAttempts.forEach((attempt) => {
-      const existing = map.get(attempt.studentRoll) || {
-        studentRoll: attempt.studentRoll,
+      if (!attempt.studentRoll) return;
+      const key = attempt.studentRoll.trim().toUpperCase();
+      const existing = map.get(key) || {
+        studentRoll: key,
         studentName: attempt.studentName,
         branch: attempt.branch,
         semesterCode: attempt.semesterCode,
@@ -207,27 +332,42 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
         totalScore: 0,
         totalPossibleScore: 0,
         accuracyPercentage: 0,
+        isRegisteredOnly: false,
       };
 
       existing.quizzesAttempted += 1;
       existing.totalScore += attempt.score;
       existing.totalPossibleScore += attempt.totalQuestions;
       existing.accuracyPercentage = Math.round((existing.totalScore / existing.totalPossibleScore) * 1000) / 10;
+      existing.isRegisteredOnly = false;
 
-      map.set(attempt.studentRoll, existing);
+      map.set(key, existing);
     });
 
-    const sorted = Array.from(map.values()).sort((a, b) => {
-      if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
-      return b.accuracyPercentage - a.accuracyPercentage;
-    });
+    const entries = Array.from(map.values());
 
-    const ranked = sorted.map((item, idx) => ({ ...item, rank: idx + 1 }));
-    setLeaderboard(ranked);
-  }, [quizAttempts]);
+    // 3. Separate students who have attended quizzes from newly registered students awaiting quizzes
+    const scorers = entries
+      .filter((e) => e.quizzesAttempted > 0)
+      .sort((a, b) => {
+        if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+        return b.accuracyPercentage - a.accuracyPercentage;
+      })
+      .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
+
+    const registeredOnly = entries
+      .filter((e) => e.quizzesAttempted === 0)
+      .sort((a, b) => {
+        const timeA = a.registeredAt ? new Date(a.registeredAt).getTime() : 0;
+        const timeB = b.registeredAt ? new Date(b.registeredAt).getTime() : 0;
+        return timeB - timeA;
+      });
+
+    setLeaderboard([...scorers, ...registeredOnly]);
+  }, [registeredStudents, quizAttempts]);
 
   // Auth Actions
-  const loginStudent = (
+  const loginStudent = async (
     name: string,
     rollNumber: string,
     branch: Branch,
@@ -247,25 +387,36 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
       targetSem = ((targetYear - 1) * 2 + Number(sStr)) as Semester;
     }
 
+    const cleanRoll = rollNumber.trim().toUpperCase();
+
     const student: StudentProfile = {
-      name,
-      rollNumber: rollNumber.toUpperCase(),
+      name: name.trim(),
+      rollNumber: cleanRoll,
       branch,
       admissionYear,
       currentYear: targetYear,
       currentSemester: targetSem,
       semesterCode: targetSemCode,
+      registeredAt: new Date().toISOString(),
       role: 'STUDENT',
     };
+
     setCurrentUser(student);
     setSelectedSemesterFilter(targetSemCode);
     setActiveView('SUBJECTS');
+
+    // Add to registered students list and broadcast to cloud
+    const updated = mergeStudents([student], studentsRef.current);
+    setRegisteredStudents(updated);
+
+    // Immediate Cloud Push so all devices see the new registration instantly
+    await pushToCloud(updated, attemptsRef.current);
   };
 
   const loginFaculty = (name: string, facultyId: string, department: string) => {
     const faculty: FacultyProfile = {
-      name,
-      facultyId: facultyId.toUpperCase(),
+      name: name.trim(),
+      facultyId: facultyId.trim().toUpperCase(),
       department,
       role: 'FACULTY',
     };
@@ -311,6 +462,12 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const startQuiz = (quizId: string) => {
+    // Enforce student registration before attempting quizzes
+    if (!currentUser || currentUser.role !== 'STUDENT') {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     for (const sub of subjectsData) {
       for (const les of sub.lessons) {
         const q = les.quizzes.find((item) => item.id === quizId);
@@ -325,9 +482,15 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Quiz Evaluation & Submission
-  const submitQuiz = (userAnswers: { [qId: string]: number }, timeTakenSeconds: number) => {
+  // Quiz Evaluation & Real-Time Submission
+  const submitQuiz = async (userAnswers: { [qId: string]: number }, timeTakenSeconds: number) => {
     if (!activeQuiz || !activeSubject || !activeLesson) return;
+
+    // Must be registered student
+    if (!currentUser || currentUser.role !== 'STUDENT') {
+      setIsAuthModalOpen(true);
+      return;
+    }
 
     let score = 0;
     activeQuiz.questions.forEach((q) => {
@@ -337,18 +500,12 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    const isStudent = currentUser && currentUser.role === 'STUDENT';
-    const studentName = isStudent ? currentUser.name : 'Guest Student';
-    const studentRoll = isStudent ? currentUser.rollNumber : '23A91A0599';
-    const branch = isStudent ? currentUser.branch : 'CSE';
-    const semesterCode = isStudent ? currentUser.semesterCode : activeSubject.semesterCode;
-
     const newAttempt: QuizAttempt = {
-      id: `attempt-${Date.now()}`,
-      studentRoll,
-      studentName,
-      branch,
-      semesterCode,
+      id: `attempt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      studentRoll: currentUser.rollNumber,
+      studentName: currentUser.name,
+      branch: currentUser.branch,
+      semesterCode: currentUser.semesterCode,
       subjectId: activeSubject.id,
       subjectName: activeSubject.name,
       lessonId: activeLesson.id,
@@ -361,9 +518,13 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
       userAnswers,
     };
 
-    setQuizAttempts((prev) => [newAttempt, ...prev]);
+    const updatedAttempts = mergeAttempts([newAttempt], attemptsRef.current);
+    setQuizAttempts(updatedAttempts);
     setLastCompletedAttempt(newAttempt);
     setActiveView('SCORE_REPORT');
+
+    // Immediate Cloud Push so all devices see the quiz attempt and rank instantly
+    await pushToCloud(studentsRef.current, updatedAttempts);
   };
 
   const updateFacultyConfig = (newConfig: Partial<FacultyConfig>) => {
@@ -424,11 +585,19 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
         activeSubject,
         activeLesson,
         activeQuiz,
+        registeredStudents,
         quizAttempts,
         leaderboard,
         facultyConfig,
         theme,
         lastCompletedAttempt,
+        cloudSyncStatus,
+        lastSyncedAt,
+        syncCloudData,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+        openAuthModal,
+        closeAuthModal,
         selectedSemesterFilter,
         selectedYearFilter,
         promotionAlert,

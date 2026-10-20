@@ -19,6 +19,7 @@ export interface StudentProfile {
   currentSemester: Semester;
   semesterCode: SemesterCode;
   lastPromotedDate?: string;
+  registeredAt?: string;
   role: 'STUDENT';
 }
 
@@ -97,11 +98,14 @@ export interface LeaderboardEntry {
   studentName: string;
   branch: Branch;
   semesterCode?: SemesterCode;
+  admissionYear?: number;
+  registeredAt?: string;
   quizzesAttempted: number;
   totalScore: number;
   totalPossibleScore: number;
   accuracyPercentage: number;
   rank?: number;
+  isRegisteredOnly?: boolean;
 }
 
 export interface FacultyConfig {
@@ -110,3 +114,6 @@ export interface FacultyConfig {
   passingPercentage: number;
   negativeMarking: boolean;
 }
+
+export type CloudSyncStatus = 'IDLE' | 'SYNCING' | 'SYNCED' | 'ERROR';
+

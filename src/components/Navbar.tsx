@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuiz } from '../context/QuizContext';
 import { AuthModal } from './AuthModal';
 import {
@@ -11,18 +11,32 @@ import {
   UserCheck,
   Shield,
   GraduationCap,
-  Sparkles
+  Sparkles,
+  RefreshCw,
+  Users
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
-  const { currentUser, activeView, navigateTo, logout, theme, toggleTheme } = useQuiz();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const {
+    currentUser,
+    activeView,
+    navigateTo,
+    logout,
+    theme,
+    toggleTheme,
+    registeredStudents,
+    cloudSyncStatus,
+    syncCloudData,
+    isAuthModalOpen,
+    openAuthModal,
+    closeAuthModal,
+  } = useQuiz();
 
   const isStudent = currentUser?.role === 'STUDENT';
 
   return (
     <>
-      <nav className="sticky top-0 z-40 w-full bg-white/85 backdrop-blur-xl border-b border-slate-200/80 shadow-sm shadow-slate-200/50 transition-colors">
+      <nav className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-xl border-b border-slate-200/80 shadow-xs transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             
@@ -80,7 +94,21 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Right Profile & Action Utilities */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
+              {/* Real-time Cloud Sync Status Pill */}
+              <button
+                onClick={() => syncCloudData()}
+                title="Click to manually refresh and sync data with cloud across all devices"
+                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-indigo-300 text-[11px] font-semibold text-slate-600 hover:text-indigo-600 transition"
+              >
+                <span className={`w-2 h-2 rounded-full ${cloudSyncStatus === 'SYNCING' ? 'bg-amber-500 animate-ping' : 'bg-emerald-500'}`} />
+                <span className="flex items-center gap-1">
+                  <Users className="w-3.5 h-3.5 text-indigo-500" />
+                  {registeredStudents.length} Registered
+                </span>
+                <RefreshCw className={`w-3 h-3 text-slate-400 ${cloudSyncStatus === 'SYNCING' ? 'animate-spin text-indigo-500' : ''}`} />
+              </button>
+
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
@@ -110,7 +138,7 @@ export const Navbar: React.FC = () => {
                   </div>
 
                   <button
-                    onClick={() => setIsAuthModalOpen(true)}
+                    onClick={openAuthModal}
                     title="Switch Account / Role"
                     className="p-1.5 text-xs bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 rounded-xl font-bold shadow-xs border border-slate-200 transition ml-1"
                   >
@@ -127,10 +155,10 @@ export const Navbar: React.FC = () => {
                 </div>
               ) : (
                 <button
-                  onClick={() => setIsAuthModalOpen(true)}
+                  onClick={openAuthModal}
                   className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-extrabold rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-2"
                 >
-                  <UserCheck className="w-4 h-4" /> Login Portal
+                  <UserCheck className="w-4 h-4" /> Register / Login
                 </button>
               )}
             </div>
@@ -139,7 +167,8 @@ export const Navbar: React.FC = () => {
       </nav>
 
       {/* Auth Modal Trigger */}
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
     </>
   );
 };
+
