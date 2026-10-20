@@ -1,9 +1,16 @@
-# 🎓 AcademiaQuiz - System Documentation
-## B.Tech Online Quiz & Real-Time Leaderboard System
+# 🎓 AcademiaQuiz &mdash; B.Tech Online Quiz & Real-Time Leaderboard System
 
-> **Repository**: [github.com/sritejamallula/online-quiz](https://github.com/sritejamallula/online-quiz)  
-> **Live Web Application**: [https://sritejamallula.github.io/online-quiz/](https://sritejamallula.github.io/online-quiz/)  
-> **Target Curriculum**: B.Tech CSE / IT (BVCEC Odalarevu R23 Autonomous Pattern)  
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20GitHub%20Pages-4F46E5?logo=githubpages&logoColor=white)](https://sritejamallula.github.io/online-quiz/)
+[![Download Project Report PDF](https://img.shields.io/badge/Project%20Report-Print%20PDF%20(16%20Pages)-10B981?logo=adobeacrobatreader&logoColor=white)](AcademiaQuiz_Project_Report_Print.pdf)
+[![Download Technical Docs PDF](https://img.shields.io/badge/Technical%20Spec-PDF%20(9%20Pages)-6366F1?logo=adobeacrobatreader&logoColor=white)](AcademiaQuiz_System_Documentation.pdf)
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
+> 🌐 **Production Web Application**: [https://sritejamallula.github.io/online-quiz/](https://sritejamallula.github.io/online-quiz/)  
+> 📄 **Academic Project Report (16-Page Print Edition for Lecturers)**: [AcademiaQuiz_Project_Report_Print.pdf](AcademiaQuiz_Project_Report_Print.pdf)  
+> 📑 **Technical System Specification (9-Page Executive Summary)**: [AcademiaQuiz_System_Documentation.pdf](AcademiaQuiz_System_Documentation.pdf)  
+> 🏛️ **Institutional Affiliation**: BVC Engineering College (Autonomous), Odalarevu &bull; JNTUK R23 Pattern  
+> 👨‍🎓 **Candidate**: Sriteja Mallula (Dept of Computer Science & Engineering)  
 
 ---
 
@@ -133,6 +140,33 @@
   - Negative marking toggle.
 - **Audit Logs**:
   - Chronological table of all submissions with student details, quiz ID, score, time taken, and pass/fail status.
+
+### 4.4 Algorithmic Foundations & Computational Analysis
+
+The system integrates algorithms both within the academic evaluation modules (**Advanced Data Structures &mdash; CS2104**) and in the underlying platform execution engine:
+
+#### A. Advanced Data Structures (ADS &mdash; CS2104) Curriculum Algorithms
+| Algorithm / Concept | Domain | Asymptotic Complexity | Pedagogical & Practical Focus |
+| :--- | :--- | :--- | :--- |
+| **AVL Tree Balancing** | Self-Balancing BST | $O(\log N)$ Search/Insert | Single (LL, RR) & Double (LR, RL) rotations maintaining Balance Factor $\in \{-1, 0, +1\}$. |
+| **Red-Black Tree Balancing** | Self-Balancing BST | $O(\log N)$ Search/Insert | Enforces 5 color invariants; height bounded by $2\log_2(N+1)$. |
+| **Bellman-Ford Algorithm** | Graph Shortest Path | $O(V \cdot E)$ Time, $O(V)$ Space | Relaxes edges $V-1$ times; handles negative edge weights & detects negative cycles. |
+| **Floyd-Warshall Algorithm** | All-Pairs Shortest Path | $O(V^3)$ Time, $O(V^2)$ Space | Dynamic programming formulation evaluating all intermediate vertex paths $k \in \{1 \dots V\}$. |
+| **0/1 Knapsack Problem** | Dynamic Programming | $O(N \cdot W)$ Pseudo-polynomial | 2D table memoization based on *Optimal Substructure* and *Overlapping Subproblems*. |
+| **Matrix Chain Multiplication** | Dynamic Programming | $O(N^3)$ Time, $O(N^2)$ Space | Computes optimal parenthesization splitting indices to minimize scalar multiplications. |
+| **Disjoint Set Union (DSU)** | Disjoint Sets | $O(\alpha(N))$ Amortized Time | Combines **Path Compression** and **Union by Rank** for near-$O(1)$ partition sets. |
+| **Master Theorem Analysis** | Asymptotic Recurrences | $T(N) = aT(N/b) + f(N)$ | Solves divide-and-conquer recurrences (e.g. $T(N) = 2T(N/2) + O(N) \implies \Theta(N \log N)$). |
+| **NP-Completeness Reductions** | Computational Complexity | Polynomial verification ($NP$) | Analyzes decision variants of 3-SAT and Knapsack via polynomial-time reductions. |
+
+#### B. Internal Platform Algorithms
+1. **Dynamic Leaderboard Hybrid Ranking Algorithm**:
+   $$\text{Rank Score} = \text{Total Points} + (\text{Average Accuracy \%} \times 0.1)$$
+   *Tie-Breakers*: Average accuracy percentage descending $\to$ Total quizzes completed descending.
+2. **Conflict-Free Cloud De-duplication Algorithm**:
+   * *Students*: Normalized uppercase roll number keying with timestamp-precedence resolution.
+   * *Quiz Attempts*: Immutable UUIDv4 hashing combined using Set-based deduplication ($O(N)$ union).
+3. **Academic Timeline Promotion Algorithm**:
+   $$\text{Semester} = \min\left(8, \max\left(1, \left\lfloor \frac{(\text{Current Year} - \text{Admission Year}) \times 12 + (\text{Month} - 7)}{6} \right\rfloor + 1\right)\right)$$
 
 ---
 
